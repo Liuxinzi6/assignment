@@ -1,0 +1,33 @@
+import jieba  
+from collections import defaultdict  
+  
+# 文本内容
+text = """  
+... 
+...  
+"""  
+  
+# 使用jieba进行分词  
+words = jieba.cut(text, cut_all=False)  
+  
+# 初始化TFIDF的词频和文档频率字典  
+word_freq = defaultdict(int)  
+doc_freq = defaultdict(int)  
+  
+# 统计词频和文档频率
+for word in words:  
+    if word not in jieba.stopwords:  # 过滤停用词
+        word_freq[word] += 1  
+        doc_freq[word] = 1  # 在这个简单的例子中，每个词都至少出现一次  
+  
+# 计算TF（词频）和IDF（逆文档频率）  
+total_words = sum(word_freq.values())  
+for word, freq in word_freq.items():  
+    tf = freq / total_words  
+    idf = 1 + log(len(doc_freq) / doc_freq[word])  # 假设log是自然对数，需要import math并使用math.log  
+    tfidf = tf * idf  
+    print(f"{word}: TF={tf:.4f}, IDF={idf:.4f}, TFIDF={tfidf:.4f}")  
+  
+# 提取关键词（这里简单地选择TFIDF值最高的五个词）  
+keywords = sorted(word_freq.items(), key=lambda x: x[1] * (1 + log(len(doc_freq) / doc_freq[x[0]])), reverse=True)[:5]  
+print("Keywords:", [keyword[0] for keyword in keywords])  
