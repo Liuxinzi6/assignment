@@ -1,0 +1,49 @@
+import pandas as pd  
+from sklearn.model_selection import train_test_split  
+from sklearn.feature_extraction.text import CountVectorizer  
+from sklearn.naive_bayes import MultinomialNB  
+from sklearn.metrics import classification_report  
+  
+# 假设我们将文本数据保存为CSV文件，并有两列：'label'和'review'  
+# 这里我们直接模拟加载数据  
+# 加载数据  
+data = [  
+    # 这里仅展示了一小部分数据，实际中应加载全部1000条评论  
+    {'label': 1, 'review': '很快，好吃，味道足，量大'},  
+    {'label': 0, 'review': '没有送水没有送水没有送水'},  
+    # ... 其他评论数据  
+]  
+df = pd.DataFrame(data)  
+  
+# 数据预处理  
+# 假设label为1代表正面情感，0代表负面情感  
+X = df['review']  
+y = df['label']  
+  
+# 划分训练集和测试集  
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)  
+  
+# 文本特征提取  
+vectorizer = CountVectorizer()  
+X_train_counts = vectorizer.fit_transform(X_train)  
+X_test_counts = vectorizer.transform(X_test)  
+  
+# 训练模型（这里使用朴素贝叶斯分类器作为示例）  
+clf = MultinomialNB()  
+clf.fit(X_train_counts, y_train)  
+  
+# 预测测试集  
+y_pred = clf.predict(X_test_counts)  
+  
+# 计算准确率、召回率和F值  
+print(classification_report(y_test, y_pred, target_names=['Negative', 'Positive']))  
+  
+# 如果需要，也可以计算具体的准确率、召回率和F值  
+from sklearn.metrics import accuracy_score, recall_score, f1_score  
+accuracy = accuracy_score(y_test, y_pred)  
+recall = recall_score(y_test, y_pred, average='binary')  
+f1 = f1_score(y_test, y_pred, average='binary')  
+  
+print(f"Accuracy: {accuracy}")  
+print(f"Recall: {recall}")  
+print(f"F1 Score: {f1}")
